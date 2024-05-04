@@ -33,7 +33,7 @@ public class LoginTests
     private readonly IConfiguration _configuration;
 
     public LoginTests(
-        OperationClaimFakeData operationClaimFakeData,
+         OperationClaimFakeData operationClaimFakeData,
         RefreshTokenFakeData refreshTokenFakeData,
         UserFakeData userFakeData
     )

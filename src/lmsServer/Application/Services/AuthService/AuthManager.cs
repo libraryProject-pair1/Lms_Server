@@ -1,8 +1,12 @@
 ﻿using System.Collections.Immutable;
+using Application.Features.Auth.Rules;
 using Application.Services.Repositories;
+using Application.Services.UsersService;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
+using NArchitecture.Core.Application.Dtos;
+using NArchitecture.Core.Security.Hashing;
 using NArchitecture.Core.Security.JWT;
 
 namespace Application.Services.AuthService;
@@ -14,14 +18,23 @@ public class AuthManager : IAuthService
     private readonly TokenOptions _tokenOptions;
     private readonly IUserOperationClaimRepository _userOperationClaimRepository;
     private readonly IMapper _mapper;
+    private readonly AuthBusinessRules _authBusinessRules;
+    private readonly IUserService _userService;
 
+    public IUserOperationClaimRepository UserOperationClaimRepository { get; }
+    public IRefreshTokenRepository RefreshTokenRepository { get; }
+    public ITokenHelper<Guid, int> TokenHelper { get; }
+    public IConfiguration Configuration { get; }
     public AuthManager(
         IUserOperationClaimRepository userOperationClaimRepository,
         IRefreshTokenRepository refreshTokenRepository,
         ITokenHelper<Guid, int> tokenHelper,
         IConfiguration configuration,
         IMapper mapper
-    )
+,
+        AuthBusinessRules authBusinessRules
+,
+        IUserService userService)
     {
         _userOperationClaimRepository = userOperationClaimRepository;
         _refreshTokenRepository = refreshTokenRepository;
@@ -32,7 +45,19 @@ public class AuthManager : IAuthService
             configuration.GetSection(tokenOptionsConfigurationSection).Get<TokenOptions>()
             ?? throw new NullReferenceException($"\"{tokenOptionsConfigurationSection}\" section cannot found in configuration");
         _mapper = mapper;
+        _authBusinessRules = authBusinessRules;
+        _userService = userService;
     }
+
+    public AuthManager(IUserOperationClaimRepository userOperationClaimRepository1, IRefreshTokenRepository refreshTokenRepository1, ITokenHelper<Guid, int> tokenHelper1, IConfiguration configuration, IMapper mapper)
+    {
+        UserOperationClaimRepository = userOperationClaimRepository1;
+        RefreshTokenRepository = refreshTokenRepository1;
+        TokenHelper = tokenHelper1;
+        Configuration = configuration;
+        _mapper = mapper;
+    }
+
 
     public async Task<AccessToken> CreateAccessToken(User user)
     {
@@ -110,5 +135,23 @@ public class AuthManager : IAuthService
         );
         RefreshToken refreshToken = _mapper.Map<RefreshToken>(coreRefreshToken);
         return Task.FromResult(refreshToken);
+    }
+
+    public async Task<User> Register(UserForRegisterDto request)
+    {
+       await _authBusinessRules.UserEmailShouldBeNotExists(request.Email);
+        HashingHelper.CreatePasswordHash(
+            request.Password,
+            passwordHash: out byte[] passwordHash,
+            passwordSalt: out byte[] passwordSalt
+            );
+        User newUser = new()
+        {
+            Email = request.Email,
+            PasswordHash = passwordHash,
+            PasswordSalt = passwordSalt
+        };
+        User createdUser=await _userService.AddAsync(newUser);
+        return createdUser;
     }
 }
