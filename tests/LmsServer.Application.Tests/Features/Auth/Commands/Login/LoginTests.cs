@@ -27,7 +27,7 @@ namespace StarterProject.Application.Tests.Features.Auth.Commands.Login;
 
 public class LoginTests
 {
-    private readonly LoginCommand _loginCommand;
+       private readonly LoginCommand _loginCommand;
     private readonly LoginCommandHandler _loginCommandHandler;
     private readonly LoginCommandValidator _validator;
     private readonly IConfiguration _configuration;
@@ -52,7 +52,7 @@ public class LoginTests
         IUserRepository _userRepository = new MockUserRepository(userFakeData).GetUserMockRepository();
         #endregion
         #region Mock Helpers
-        ITokenHelper<Guid, int> tokenHelper = new JwtHelper<Guid, int>(_configuration);
+        ITokenHelper<Guid, int, Guid> tokenHelper = new JwtHelper<Guid, int, Guid>(_configuration.GetSection("TokenOptions").Get<TokenOptions>());
         IEmailAuthenticatorHelper emailAuthenticatorHelper = new EmailAuthenticatorHelper();
         MailSettings mailSettings =
             _configuration.GetSection("MailSettings").Get<MailSettings>() ?? throw new Exception("Mail settings not found.");
@@ -83,7 +83,7 @@ public class LoginTests
         );
         _validator = new LoginCommandValidator();
         _loginCommand = new LoginCommand();
-        _loginCommandHandler = new LoginCommandHandler(_userService, _authService, authBusinessRules, _authententicatorService);
+        _loginCommandHandler = new LoginCommandHandler(_userService, _authService, authBusinessRules, _authententicatorService,mailService);
     }
 
     [Fact]
@@ -140,4 +140,5 @@ public class LoginTests
         TestValidationResult<LoginCommand> validationResult = _validator.TestValidate(_loginCommand);
         validationResult.ShouldHaveValidationErrorFor(i => i.UserForLoginDto.Password);
     }
+
 }

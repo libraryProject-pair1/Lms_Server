@@ -2,6 +2,7 @@ namespace Domain.Enums;
 
 public enum ReturnStatus
 {
-    NotReturned,
-    Returned
+    NOTRETURNED = 1,
+    RETURNED = 2,
+    BORROWED = 3
 }

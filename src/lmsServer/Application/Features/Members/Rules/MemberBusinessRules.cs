@@ -39,4 +39,10 @@ public class MemberBusinessRules : BaseBusinessRules
         );
         await MemberShouldExistWhenSelected(member);
     }
+    public async Task MemberEmailShouldBeNotExists(string email)
+    {
+        bool doesExists = await _memberRepository.AnyAsync(predicate: u => u.Email == email);
+        if (doesExists)
+            await throwBusinessException(MembersBusinessMessages.MemberMailAlreadyExists);
+    }
 }

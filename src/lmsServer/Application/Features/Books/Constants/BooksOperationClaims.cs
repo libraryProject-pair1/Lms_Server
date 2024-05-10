@@ -1,8 +1,8 @@
-using NArchitecture.Core.Security.Attributes;
+
 
 namespace Application.Features.Books.Constants;
 
-[OperationClaimConstants]
+
 public static class BooksOperationClaims
 {
     private const string _section = "Books";

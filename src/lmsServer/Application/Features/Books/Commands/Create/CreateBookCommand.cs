@@ -18,7 +18,7 @@ namespace Application.Features.Books.Commands.Create;
 public class CreateBookCommand : IRequest<CreatedBookResponse>, ISecuredRequest, ICacheRemoverRequest, ILoggableRequest,
     ITransactionalRequest
 {
-    public string Name { get; set; }
+  public string Name { get; set; }
     public string ISBN { get; set; }
     public int Page { get; set; }
     public string Language { get; set; }
@@ -57,7 +57,7 @@ public class CreateBookCommand : IRequest<CreatedBookResponse>, ISecuredRequest,
         public async Task<CreatedBookResponse> Handle(CreateBookCommand request, CancellationToken cancellationToken)
         {
             
-            
+            await _bookBusinessRules.BookShouldBeNotExists(request.Name);
             Book book = _mapper.Map<Book>(request);
             
             await _bookRepository.AddAsync(book);

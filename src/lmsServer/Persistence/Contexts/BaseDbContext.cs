@@ -23,6 +23,7 @@ public class BaseDbContext : DbContext
     public DbSet<BookPublisher> BookPublishers { get; set; }
     public DbSet<Book> Books { get; set; }
     public DbSet<LoanTransaction> LoanTransactions { get; set; }
+    public DbSet<Announcement> Announcements { get; set; }
 
     public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration)
         : base(dbContextOptions)

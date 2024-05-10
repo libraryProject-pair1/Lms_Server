@@ -18,13 +18,13 @@ public class BaseController : ControllerBase
         string ipAddress = Request.Headers.ContainsKey("X-Forwarded-For")
             ? Request.Headers["X-Forwarded-For"].ToString()
             : HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString()
-                ?? throw new InvalidOperationException("IP address cannot be retrieved from request.");
+              ?? throw new InvalidOperationException("IP address cannot be retrieved from request.");
         return ipAddress;
     }
 
     protected Guid getUserIdFromRequest() //todo authentication behavior?
     {
-        var userId = Guid.Parse(HttpContext.User.GetUserId().ToString()!);
+        var userId = Guid.Parse(HttpContext.User.GetIdClaim()?.ToString()!);
         return userId;
     }
 }

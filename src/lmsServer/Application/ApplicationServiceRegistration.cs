@@ -28,7 +28,8 @@ using Application.Services.Categories;
 using Application.Services.BookPublishers;
 using Application.Services.Books;
 using Application.Services.LoanTransactions;
-
+using Application.Services.Announcements;
+using NArchitecture.Core.Security.JWT;
 
 
 namespace Application;
@@ -39,7 +40,8 @@ public static class ApplicationServiceRegistration
         this IServiceCollection services,
         MailSettings mailSettings,
         FileLogConfiguration fileLogConfiguration,
-        ElasticSearchConfig elasticSearchConfig
+        ElasticSearchConfig elasticSearchConfig,
+        TokenOptions tokenOptions
     )
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -68,7 +70,7 @@ public static class ApplicationServiceRegistration
 
         services.AddYamlResourceLocalization();
 
-        services.AddSecurityServices<Guid, int>();
+        services.AddSecurityServices<Guid, int, Guid>(tokenOptions);
 
         services.AddScoped<IAuthorBookService, AuthorBookManager>();
         services.AddScoped<IAuthorService, AuthorManager>();
@@ -81,6 +83,7 @@ public static class ApplicationServiceRegistration
      
      services.AddScoped<IBookService, BookManager>();
      services.AddScoped<ILoanTransactionService, LoanTransactionManager>();
+     services.AddScoped<IAnnouncementService, AnnouncementManager>();
         return services;
     }
 

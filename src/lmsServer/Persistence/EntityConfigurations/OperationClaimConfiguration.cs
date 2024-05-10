@@ -15,6 +15,7 @@ using Application.Features.Categories.Constants;
 using Application.Features.BookPublishers.Constants;
 using Application.Features.Books.Constants;
 using Application.Features.LoanTransactions.Constants;
+using Application.Features.Announcements.Constants;
 
 
 
@@ -235,6 +236,20 @@ public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationCla
               new() { Id = ++lastId, Name = LoanTransactionsOperationClaims.Create },
               new() { Id = ++lastId, Name = LoanTransactionsOperationClaims.Update },
               new() { Id = ++lastId, Name = LoanTransactionsOperationClaims.Delete },
+          ]
+      );
+      #endregion
+      
+      
+      #region Announcements
+      featureOperationClaims.AddRange(
+          [
+              new() { Id = ++lastId, Name = AnnouncementsOperationClaims.Admin },
+              new() { Id = ++lastId, Name = AnnouncementsOperationClaims.Read },
+              new() { Id = ++lastId, Name = AnnouncementsOperationClaims.Write },
+              new() { Id = ++lastId, Name = AnnouncementsOperationClaims.Create },
+              new() { Id = ++lastId, Name = AnnouncementsOperationClaims.Update },
+              new() { Id = ++lastId, Name = AnnouncementsOperationClaims.Delete },
           ]
       );
       #endregion

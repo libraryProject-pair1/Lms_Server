@@ -4,7 +4,9 @@ using Application.Services.AuthService;
 using Application.Services.UsersService;
 using Domain.Entities;
 using MediatR;
+using MimeKit;
 using NArchitecture.Core.Application.Dtos;
+using NArchitecture.Core.Mailing;
 using NArchitecture.Core.Security.Enums;
 using NArchitecture.Core.Security.JWT;
 
@@ -33,18 +35,20 @@ public class LoginCommand : IRequest<LoggedResponse>
         private readonly IAuthenticatorService _authenticatorService;
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
-
+        private readonly IMailService _mailService;
         public LoginCommandHandler(
             IUserService userService,
             IAuthService authService,
             AuthBusinessRules authBusinessRules,
-            IAuthenticatorService authenticatorService
+            IAuthenticatorService authenticatorService,
+            IMailService mailService
         )
         {
             _userService = userService;
             _authService = authService;
             _authBusinessRules = authBusinessRules;
             _authenticatorService = authenticatorService;
+            _mailService = mailService;
         }
 
         public async Task<LoggedResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -71,7 +75,14 @@ public class LoginCommand : IRequest<LoggedResponse>
             }
 
             AccessToken createdAccessToken = await _authService.CreateAccessToken(user);
-
+            Mail mail = new Mail(
+                subject: "Deneme Maili",
+                textBody: " Hoşgeldiniz "  ,
+                htmlBody: " Hoşgeldiniz" ,
+                new List<MailboxAddress>()
+                { new(request.UserForLoginDto.Email,request.UserForLoginDto.Email)}
+                );
+            await _mailService.SendEmailAsync(mail); 
             Domain.Entities.RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(user, request.IpAddress);
             Domain.Entities.RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
             await _authService.DeleteOldRefreshTokens(user.Id);

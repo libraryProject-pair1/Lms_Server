@@ -32,6 +32,7 @@ public static class PersistenceServiceRegistration
         
         services.AddScoped<IBookRepository, BookRepository>();
         services.AddScoped<ILoanTransactionRepository, LoanTransactionRepository>();
+        services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
         return services;
     }
 }

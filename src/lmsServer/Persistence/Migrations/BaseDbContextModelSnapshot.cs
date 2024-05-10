@@ -17,10 +17,49 @@ namespace Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Domain.Entities.Announcement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Description");
+
+                    b.Property<string>("Organization")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Organization");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Title");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Announcements", (string)null);
+                });
 
             modelBuilder.Entity("Domain.Entities.Author", b =>
                 {
@@ -322,8 +361,8 @@ namespace Persistence.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("MemberId");
 
-                    b.Property<bool>("ReturnStatus")
-                        .HasColumnType("bit")
+                    b.Property<int?>("ReturnStatus")
+                        .HasColumnType("int")
                         .HasColumnName("ReturnStatus");
 
                     b.Property<DateTime>("ReturnTime")
@@ -885,6 +924,42 @@ namespace Persistence.Migrations
                             Id = 77,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "LoanTransactions.Delete"
+                        },
+                        new
+                        {
+                            Id = 78,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Announcements.Admin"
+                        },
+                        new
+                        {
+                            Id = 79,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Announcements.Read"
+                        },
+                        new
+                        {
+                            Id = 80,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Announcements.Write"
+                        },
+                        new
+                        {
+                            Id = 81,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Announcements.Create"
+                        },
+                        new
+                        {
+                            Id = 82,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Announcements.Update"
+                        },
+                        new
+                        {
+                            Id = 83,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Announcements.Delete"
                         });
                 });
 
@@ -976,7 +1051,7 @@ namespace Persistence.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<DateTime>("ExpiresDate")
+                    b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("ExpiresDate");
 
@@ -1061,12 +1136,12 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("514f77e0-98b6-4806-b77e-cece2f402e81"),
+                            Id = new Guid("3dd100c5-37b5-458e-b49b-996059e59c05"),
                             AuthenticatorType = 0,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "narch@kodlama.io",
-                            PasswordHash = new byte[] { 15, 130, 72, 32, 237, 53, 187, 133, 117, 65, 115, 182, 150, 70, 147, 143, 112, 139, 151, 173, 240, 19, 255, 242, 151, 50, 21, 144, 99, 196, 82, 179, 195, 78, 97, 145, 232, 27, 240, 36, 43, 122, 39, 184, 40, 89, 238, 147, 5, 142, 121, 138, 83, 220, 99, 33, 101, 39, 76, 242, 73, 124, 82, 120 },
-                            PasswordSalt = new byte[] { 33, 218, 70, 146, 221, 237, 140, 158, 36, 208, 241, 166, 241, 109, 244, 244, 255, 208, 90, 133, 169, 25, 223, 23, 144, 218, 16, 51, 213, 142, 139, 58, 38, 234, 187, 155, 147, 106, 159, 196, 59, 11, 184, 93, 21, 217, 245, 86, 204, 137, 35, 45, 94, 33, 12, 184, 46, 129, 224, 148, 34, 216, 10, 254, 118, 77, 209, 41, 234, 151, 104, 13, 230, 179, 0, 171, 168, 86, 254, 208, 219, 61, 99, 82, 168, 124, 0, 244, 88, 91, 228, 235, 241, 171, 222, 67, 243, 17, 96, 139, 214, 197, 85, 135, 91, 118, 236, 158, 195, 43, 126, 86, 242, 67, 244, 238, 189, 32, 113, 70, 148, 254, 106, 149, 142, 13, 6, 180 }
+                            PasswordHash = new byte[] { 44, 103, 156, 95, 79, 248, 9, 132, 124, 195, 205, 189, 95, 87, 73, 217, 8, 179, 254, 30, 255, 189, 114, 189, 191, 80, 84, 234, 59, 44, 236, 119, 188, 226, 202, 193, 206, 25, 145, 181, 5, 34, 157, 78, 231, 129, 229, 243, 29, 249, 138, 92, 30, 94, 166, 220, 136, 245, 188, 191, 196, 216, 1, 214 },
+                            PasswordSalt = new byte[] { 32, 38, 33, 167, 224, 49, 58, 42, 154, 137, 129, 197, 55, 6, 36, 213, 217, 2, 255, 252, 107, 16, 224, 23, 207, 248, 85, 121, 73, 79, 222, 31, 210, 63, 102, 26, 121, 227, 170, 105, 244, 238, 39, 163, 82, 91, 4, 13, 141, 253, 164, 48, 147, 219, 179, 171, 154, 129, 101, 206, 45, 18, 238, 204, 138, 59, 81, 160, 155, 80, 47, 187, 17, 236, 177, 108, 220, 52, 185, 112, 128, 142, 27, 40, 114, 10, 95, 217, 180, 118, 36, 68, 79, 218, 16, 182, 171, 79, 24, 22, 226, 120, 247, 42, 215, 143, 194, 73, 241, 155, 6, 125, 112, 75, 95, 149, 178, 59, 51, 106, 14, 51, 144, 179, 48, 145, 186, 232 }
                         });
                 });
 
@@ -1108,10 +1183,10 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("558a477b-9b60-47ef-a6c6-fc6ca631e5f9"),
+                            Id = new Guid("afec0140-dfbc-4259-99a3-a1f1554e118e"),
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OperationClaimId = 1,
-                            UserId = new Guid("514f77e0-98b6-4806-b77e-cece2f402e81")
+                            UserId = new Guid("3dd100c5-37b5-458e-b49b-996059e59c05")
                         });
                 });
 

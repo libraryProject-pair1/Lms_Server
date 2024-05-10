@@ -5,4 +5,6 @@ public static class BooksBusinessMessages
     public const string SectionName = "Book";
 
     public const string BookNotExists = "BookNotExists";
+    
+    public const string BookAlreadyExists = "BookAlreadyExists";
 }

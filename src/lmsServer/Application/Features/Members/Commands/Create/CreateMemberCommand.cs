@@ -1,4 +1,5 @@
 
+using Application.Features.Auth.Rules;
 using Application.Features.Members.Rules;
 using Application.Services.Repositories;
 using AutoMapper;
@@ -7,15 +8,17 @@ using NArchitecture.Core.Application.Pipelines.Caching;
 using NArchitecture.Core.Application.Pipelines.Logging;
 using NArchitecture.Core.Application.Pipelines.Transaction;
 using MediatR;
-using Application.Services.UsersService;
 using Application.Services.AuthService;
+using MimeKit;
 using NArchitecture.Core.Application.Dtos;
+using NArchitecture.Core.Mailing;
+
 
 namespace Application.Features.Members.Commands.Create;
 
 public class CreateMemberCommand : IRequest<CreatedMemberResponse>, ICacheRemoverRequest, ILoggableRequest, ITransactionalRequest
 {
-    public string FirstName { get; set; }
+      public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
@@ -31,18 +34,21 @@ public class CreateMemberCommand : IRequest<CreatedMemberResponse>, ICacheRemove
         private readonly IMemberRepository _memberRepository;
         private readonly MemberBusinessRules _memberBusinessRules;
         private readonly IAuthService _authService;
+        private readonly IMailService _mailService;
 
         public CreateMemberCommandHandler(IMapper mapper, IMemberRepository memberRepository,
-                                         MemberBusinessRules memberBusinessRules, IAuthService authService)
+                                         MemberBusinessRules memberBusinessRules, IAuthService authService,IMailService mailService)
         {
             _mapper = mapper;
             _memberRepository = memberRepository;
             _memberBusinessRules = memberBusinessRules;
             _authService = authService;
+            _mailService = mailService;
         }
 
         public async Task<CreatedMemberResponse> Handle(CreateMemberCommand request, CancellationToken cancellationToken)
         {
+            await _memberBusinessRules.MemberEmailShouldBeNotExists(request.Email);
             User User = await _authService.Register(new UserForRegisterDto()
             {
                 Email = request.Email,
@@ -54,9 +60,17 @@ public class CreateMemberCommand : IRequest<CreatedMemberResponse>, ICacheRemove
 
            
             await _memberRepository.AddAsync(member);
-
+            Mail mail = new Mail(
+                subject: "Deneme Maili",
+                textBody: " Kayýt Baþarýlý, Hoþgeldiniz " + request.FirstName,
+                htmlBody: "<p>Kayýt Baþarýlý, Hoþgeldiniz</p>" + request.FirstName,
+                new List<MailboxAddress>()
+                { new(request.FirstName+" "+request.LastName,request.Email)}
+                );
+            await _mailService.SendEmailAsync(mail);
             CreatedMemberResponse response = _mapper.Map<CreatedMemberResponse>(member);
             return response;
         }
     }
+
 }

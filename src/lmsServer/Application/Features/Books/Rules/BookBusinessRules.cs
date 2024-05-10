@@ -39,4 +39,10 @@ public class BookBusinessRules : BaseBusinessRules
         );
         await BookShouldExistWhenSelected(book);
     }
+    public async Task BookShouldBeNotExists(string bookName)
+    {
+        bool doesExists = await _bookRepository.AnyAsync(predicate: u => u.Name == bookName);
+        if (doesExists)
+            await throwBusinessException(BooksBusinessMessages.BookAlreadyExists);
+    }
 }

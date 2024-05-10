@@ -1,8 +1,8 @@
-using NArchitecture.Core.Security.Attributes;
+
 
 namespace Application.Features.LoanTransactions.Constants;
 
-[OperationClaimConstants]
+
 public static class LoanTransactionsOperationClaims
 {
     private const string _section = "LoanTransactions";

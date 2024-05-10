@@ -17,7 +17,6 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using WebAPI;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices(
     mailSettings: builder.Configuration.GetSection("MailSettings").Get<MailSettings>()
@@ -27,7 +26,9 @@ builder.Services.AddApplicationServices(
         .Get<FileLogConfiguration>()
         ?? throw new InvalidOperationException("FileLogConfiguration section cannot found in configuration."),
     elasticSearchConfig: builder.Configuration.GetSection("ElasticSearchConfig").Get<ElasticSearchConfig>()
-        ?? throw new InvalidOperationException("ElasticSearchConfig section cannot found in configuration.")
+        ?? throw new InvalidOperationException("ElasticSearchConfig section cannot found in configuration."),
+    tokenOptions: builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>()
+        ?? throw new InvalidOperationException("TokenOptions section cannot found in configuration.")
 );
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddInfrastructureServices();
